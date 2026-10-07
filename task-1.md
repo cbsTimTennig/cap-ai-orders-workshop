@@ -78,7 +78,7 @@ service OrdersAssistantService {
 ```
 
 ## Add the Supplied Handler
-Create `srv/orders-assistant/service.ts` with the following code. It reuses the existing CAP order operations; the model connection is used only when Part 3 enables the agent.
+Create `srv/orders-assistant/service.ts` with the following code. It reuses the existing CAP order operations; the model connection is used only when Part 2 enables the agent.
 
 ```ts
 import cds from '@sap/cds'

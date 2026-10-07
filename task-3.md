@@ -1,22 +1,15 @@
-# Part 3: CAP Agent and Second Client
+# Part 3: Agent Instructions and Order Skill
 
-**Time:** 10 minutes. **Files to create:** `srv/orders-assistant/agent.cds` and `srv/orders-assistant/AGENTS.md`
+**Time:** 10 minutes. **Files to create:** `srv/orders-assistant/AGENTS.md` and `srv/orders-assistant/skills/order-management/SKILL.md`
 
 ## Goal
-`@cap-js/agents` creates an agent with tool use and a ReAct loop from the CAP service. Your `AGENTS.md` and the Part 2 skill guide its behavior. CAP exposes an A2A endpoint and a ready-made chat preview.
+The agent from Part 2 can already use CAP tools. Now give it a general role and a focused order workflow. These Markdown files are instructions for the model, not executable CAP rules or new permissions.
 
-## Task
-Create `srv/orders-assistant/agent.cds`:
+## What Changes?
+Without `AGENTS.md`, the agent card advertises capabilities generated from the CDS entity and actions. With `AGENTS.md` beside the service, `@cap-js/agents` builds a Markdown-based agent that reads those general instructions. It discovers skills in the adjacent `skills/` directory and shows their frontmatter names and descriptions in the card. The card does not show their full instructions or prove the model followed them.
 
-```cds
-using { OrdersAssistantService } from './service';
-
-annotate OrdersAssistantService with @agent: '/a2a/orders-assistant';
-```
-
-The `using` line refers to the service you built in Part 1; it does not create a second service. The annotation tells `@cap-js/agents` to expose that service as an agent at the A2A path. Its existing orders and actions become the agent's tools, while the CAP service still handles their execution and authorization. This is why you do not have to write a chat loop yourself.
-
-Create `srv/orders-assistant/AGENTS.md` to describe how the agent should behave. Unlike the CDS annotation, these plain-language instructions guide the model rather than change the service. For example:
+## Write Agent Instructions
+Create `srv/orders-assistant/AGENTS.md` (plural). This file describes the agent's role and points it to the order-management skill:
 
 ```md
 ---
@@ -34,14 +27,47 @@ an order: approval belongs to an authorized employee outside this agent.
 Use the order-management skill for the approval workflow and response style.
 ```
 
-Start `npm run cap` with your own Gemini key set as `GEMINI_API_KEY` in local `.env` or a Codespaces secret.
+## Write the Skill
+A skill is a plain-language Markdown workflow the agent can consult when it is relevant to a request. Its frontmatter `name` identifies it and `description` tells the agent when to use it. Create `srv/orders-assistant/skills/order-management/SKILL.md`:
+
+```md
+---
+name: order-management
+description: Use for questions about orders and for creating, requesting approval, or cancelling orders.
+---
+
+# Order Management
+
+## Approval rule
+
+- For orders above 10,000 EUR, call `createOrder`, then `requestApproval` with the new order number.
+- For orders of 10,000 EUR or less, create the order without requesting approval.
+
+## Restrictions
+
+- Never approve an order yourself; only an authorized person can do that outside the agent.
+- Cancel an order only when explicitly asked.
+
+## Workflow
+
+- Read existing orders with `query`; use tool results for status and amounts.
+- Ask for a missing customer or amount instead of inventing one.
+
+## Response style
+
+- Answer in English in at most three sentences, including the order number when available.
+- Format amounts like `12,500.00 EUR`.
+```
+
+The action names refer to tools from Part 1. CAP still executes their calls and enforces roles; the 10,000 EUR threshold here is model guidance, not a server-side rule for every client.
 
 ## Try It
-Open `/a2a/orders-assistant/preview/` on CAP port 4004 (keep the trailing slash to retain authentication through redirects). Ask about order 1001, then create an order for 25,000 EUR and follow the `describe`, `query`, and `call` calls in the CAP console. Compare the same request in VS Code Copilot: Copilot is an external MCP client with its own model; the browser preview talks to the CAP agent over A2A, using the separately configured Gemini model. Copilot does **not** automatically load the CAP agent skill, so its handling of the 10,000 EUR rule may differ. Check the order and status in CAP, not just the response text.
+Run `npm run check:skill` to check the key text rules (not a model test). Restart CAP, then compare `/a2a/orders-assistant/.well-known/agent-card.json` with the Part 2 card. Look for `orders-assistant` and `order-management` instead of the CDS-generated action list.
+
+Start a new conversation at `/a2a/orders-assistant/preview/` and create a 25,000 EUR order for Example Co. Check that CAP called `createOrder` and `requestApproval` and that the order is `PENDING_APPROVAL`; do not rely on the reply alone. If the model fails after a write, check CAP before retrying. Copilot uses MCP with its own model and does **not** automatically load this agent's skill, so its response may differ.
 
 ## Think About It
-Why does the browser need no custom agent loop? Why would a Teams client require a separate integration instead of reusing the browser page? `@agent.hitl` requests user confirmation *before* a tool call; it is not the business approval status of an order.
+Why does a card listing `order-management` not prove that the model followed the skill? Where would you enforce the approval threshold for *every* client? The shared CAP handler in `srv/order-operations.ts` is one place to consider.
 
 ## Help
-Compare your agent annotation with the completed example under `parts/3-agent/solution/`. If the browser preview has no model response, check CAP logs and verify that `GEMINI_API_KEY` is present in the CAP process; your Copilot login does not replace it.
-If a response stops after `createOrder`, check the order and status through OData before submitting the request again. A client timeout does not undo completed CAP actions.
+Compare your files with the completed examples under `parts/3-instructions/solution/`. If the card still lists the CDS actions, confirm the file is named `AGENTS.md` and restart CAP.

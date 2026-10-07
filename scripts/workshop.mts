@@ -15,20 +15,17 @@ const parts: Record<string, { task: Copy[], solution: Copy[], files: string[] }>
     files: ['srv/orders-assistant/service.cds', 'srv/orders-assistant/service.ts', '.mcp.json']
   },
   2: {
-    task: [['parts/2-skill/task/order-management.SKILL.md', 'srv/orders-assistant/skills/order-management/SKILL.md']],
-    solution: [['parts/2-skill/solution/order-management.SKILL.md', 'srv/orders-assistant/skills/order-management/SKILL.md']],
-    files: ['srv/orders-assistant/skills/order-management/SKILL.md']
+    task: [],
+    solution: [['parts/2-agent/solution/agent.cds', 'srv/orders-assistant/agent.cds']],
+    files: ['srv/orders-assistant/agent.cds']
   },
   3: {
-    task: [
-      ['parts/3-agent/task/agent.cds', 'srv/orders-assistant/agent.cds'],
-      ['parts/3-agent/AGENTS.md', 'srv/orders-assistant/AGENTS.md']
-    ],
+    task: [],
     solution: [
-      ['parts/3-agent/solution/agent.cds', 'srv/orders-assistant/agent.cds'],
-      ['parts/3-agent/AGENTS.md', 'srv/orders-assistant/AGENTS.md']
+      ['parts/3-instructions/solution/AGENTS.md', 'srv/orders-assistant/AGENTS.md'],
+      ['parts/3-instructions/solution/order-management.SKILL.md', 'srv/orders-assistant/skills/order-management/SKILL.md']
     ],
-    files: ['srv/orders-assistant/agent.cds', 'srv/orders-assistant/AGENTS.md']
+    files: ['srv/orders-assistant/AGENTS.md', 'srv/orders-assistant/skills/order-management/SKILL.md']
   }
 }
 
