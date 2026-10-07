@@ -1,0 +1,11 @@
+{
+  "name": "CAP AI Workshop",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "postCreateCommand": "npm ci",
+  "forwardPorts": [4004],
+  "portsAttributes": {
+    "4004": { "label": "CAP + MCP + Agent", "onAutoForward": "openPreview" }
+  },
+  "secrets": { "GEMINI_API_KEY": { "description": "Gemini API key for the CAP agent" } },
+  "customizations": { "vscode": { "extensions": ["SAP.cds-lsp-vscode"] } }
+}

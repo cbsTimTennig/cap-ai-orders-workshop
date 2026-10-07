@@ -1,0 +1,45 @@
+{
+  "name": "cap-ai-workshop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Workshop: CAP + MCP + Skill + CAP Agent",
+  "scripts": {
+    "workshop": "tsx scripts/workshop.mts",
+    "cap": "node --env-file-if-exists=.env node_modules/@sap/cds-dk/bin/cds.js watch",
+    "check:mcp": "tsx scripts/check-mcp.mts",
+    "check:skill": "tsx scripts/check-skill.ts",
+    "check:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cap-js/agents": "0.9.7",
+    "@cap-js/mcp": "1.5.0",
+    "@langchain/google-genai": "2.3.2",
+    "@modelcontextprotocol/sdk": "^1.20.0",
+    "@sap/cds": "^9"
+  },
+  "devDependencies": {
+    "@cap-js/cds-types": "0.20.0",
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9",
+    "@types/node": "26.6.4",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  },
+  "cds": {
+    "agents": {
+      "retention": "7d"
+    },
+    "requires": {
+      "llm": {
+        "model": "gemini-3.5-flash-lite"
+      },
+      "auth": {
+        "kind": "mocked",
+        "users": {
+          "alice": { "password": "", "roles": ["approver"] },
+          "bob": { "password": "", "roles": [] }
+        }
+      }
+    }
+  }
+}
