@@ -28,6 +28,4 @@ export default function registerOrderActions(service: cds.ApplicationService): v
 
   service.on('requestApproval', (req) => transition(req.data.orderNo, ['NEW'], 'PENDING_APPROVAL'))
   service.on('cancelOrder', (req) => transition(req.data.orderNo, ['NEW', 'PENDING_APPROVAL'], 'CANCELLED'))
-  if (service.name === 'OrdersService')
-    service.on('approveOrder', (req) => transition(req.data.orderNo, ['PENDING_APPROVAL'], 'APPROVED'))
 }

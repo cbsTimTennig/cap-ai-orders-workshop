@@ -18,16 +18,15 @@ using { workshop as db } from '../../db/schema';
 `workshop` is the namespace in the database schema. The alias `db` lets you write `db.Orders` below; the service reuses that entity rather than creating another table. The relative path goes from `srv/orders-assistant/` to `db/`.
 
 ### Expose a Focused Service
-Add the annotations and a service with room for the entity and actions:
+Add the MCP annotation and a service with room for the entity and actions:
 
 ```cds
-@requires: 'authenticated-user'
 @mcp: '/mcp/orders-assistant'
 service OrdersAssistantService {
 }
 ```
 
-`@requires` asks CAP for an authenticated user; the local Copilot connection uses mock user `bob`. `@mcp` makes this service available at `/mcp/orders-assistant`. Try leaving `@mcp` out temporarily: CAP then shows this service through its default OData endpoint. Put `@mcp` back before the MCP check. The original Orders OData API stays available either way.
+`@mcp` makes this service available at `/mcp/orders-assistant`. Try leaving it out temporarily: CAP then shows this service through its default OData endpoint. Put `@mcp` back before the MCP check. The original Orders OData API stays available either way.
 
 ### Make Orders Readable
 Between the service braces, add a projection of the existing orders:
@@ -53,14 +52,13 @@ action requestApproval(orderNo : Integer) returns Orders;
 action cancelOrder(orderNo : Integer) returns Orders;
 ```
 
-Each action declares its inputs and returns an `Orders` result. MCP's generic `call` tool invokes the actions; `query` reads orders; `describe` lists them with their `/** ... */` comments. Try rewording one action comment and calling `describe` again. These descriptions guide clients but do not enforce business rules: the supplied handler performs the changes. Do **not** add `approveOrder` here; it stays on the original Orders service and requires the `approver` role.
+Each action declares its inputs and returns an `Orders` result. MCP's generic `call` tool invokes the actions; `query` reads orders; `describe` lists them with their `/** ... */` comments. Try rewording one action comment and calling `describe` again. These descriptions guide clients but do not enforce business rules: the supplied handler performs the changes. Do **not** add `approveOrder`: approval itself is outside this workshop.
 
 Your service should now look something like this:
 
 ```cds
 using { workshop as db } from '../../db/schema';
 
-@requires: 'authenticated-user'
 @mcp: '/mcp/orders-assistant'
 service OrdersAssistantService {
 	/** Read orders and their current status before answering questions. */
@@ -99,17 +97,14 @@ export default class OrdersAssistantService extends cds.ApplicationService {
 ```
 
 ## Connect Copilot
-Create `.mcp.json` in the workspace root with this local-only connection. The Basic Auth header identifies mock user `bob`, who cannot approve orders.
+Create `.mcp.json` in the workspace root with this local-only connection.
 
 ```json
 {
 	"mcpServers": {
 		"orders-cap": {
 			"type": "http",
-			"url": "http://localhost:4004/mcp/orders-assistant",
-			"headers": {
-				"Authorization": "Basic Ym9iOg=="
-			}
+			"url": "http://localhost:4004/mcp/orders-assistant"
 		}
 	}
 }
@@ -118,12 +113,12 @@ Create `.mcp.json` in the workspace root with this local-only connection. The Ba
 Use port 4004 for CAP, or adjust both this URL and `CAP_URL` for the checker if you use another port.
 
 ## Try It
-Start `npm run cap` in one terminal, then run `npm run check:mcp` in another. The check reads order 1001, creates a test order, requests approval, and verifies the role boundary. It does not require Copilot or `.mcp.json`.
+Start `npm run cap` in one terminal, then run `npm run check:mcp` in another. The check reads order 1001, creates a test order, requests approval, and confirms no approve action is exposed. It does not require Copilot or `.mcp.json`.
 
 Open Copilot Chat in VS Code Agent mode. Trust the local MCP server and inspect its tools. Ask: "Which orders are waiting for approval?" or "Create a 250 EUR order for Example Co." Review write tool calls before accepting them.
 
 ## Think About It
-How do the MCP actions differ from the original OData API? Why must even the generic `call` tool be unable to approve an order?
+How do the MCP actions differ from the original OData API? Why is requesting approval different from approving an order?
 
 ## Help
 Compare your files with the completed example under `parts/1-mcp/solution/`.

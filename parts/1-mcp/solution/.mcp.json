@@ -2,10 +2,7 @@
   "mcpServers": {
     "orders-cap": {
       "type": "http",
-      "url": "http://localhost:4004/mcp/orders-assistant",
-      "headers": {
-        "Authorization": "Basic Ym9iOg=="
-      }
+      "url": "http://localhost:4004/mcp/orders-assistant"
     }
   }
 }

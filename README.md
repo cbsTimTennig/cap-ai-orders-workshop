@@ -26,4 +26,4 @@ Continue directly to the next guide; each part builds on the files you created e
 - For Part 1: VS Code with GitHub Copilot Chat in Agent mode and permission to use workspace MCP servers.
 - From Part 2 onward: a separate Gemini API key. Copy `.env.example` to `.env`, set `GEMINI_API_KEY`, and restart CAP (or use a Codespaces secret). Your Copilot login is not a Gemini key. Never commit the key or put it in the browser.
 
-This workshop uses mock users and an in-memory database. Restarting CAP resets test orders; the local mock authentication is not suitable for production.
+This workshop has no login and uses an in-memory database. Restarting CAP resets test orders. Keep the service private to your local or Codespaces environment; do not expose it publicly or use real customer data.

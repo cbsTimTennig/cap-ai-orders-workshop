@@ -1,6 +1,5 @@
 using { workshop as db } from '../../db/schema';
 
-@requires: 'authenticated-user'
 @mcp: '/mcp/orders-assistant'
 service OrdersAssistantService {
   /** Read orders and their current status before answering questions. */

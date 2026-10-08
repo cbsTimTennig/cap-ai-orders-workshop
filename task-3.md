@@ -23,7 +23,7 @@ description: Helps customers find, create, and request approval for workshop ord
 You help users manage orders through the OrdersAssistantService tools.
 Read order data before stating facts about existing orders. Ask for a customer and
 amount if either is missing before creating an order. Never claim you can approve
-an order: approval belongs to an authorized employee outside this agent.
+an order: approving orders is outside this workshop.
 Use the order-management skill for the approval workflow and response style.
 ```
 
@@ -45,7 +45,7 @@ description: Use for questions about orders and for creating, requesting approva
 
 ## Restrictions
 
-- Never approve an order yourself; only an authorized person can do that outside the agent.
+- Never approve an order yourself; approving orders is outside this workshop.
 - Cancel an order only when explicitly asked.
 
 ## Workflow
@@ -59,10 +59,12 @@ description: Use for questions about orders and for creating, requesting approva
 - Format amounts like `12,500.00 EUR`.
 ```
 
-The action names refer to tools from Part 1. CAP still executes their calls and enforces roles; the 10,000 EUR threshold here is model guidance, not a server-side rule for every client.
+The action names refer to tools from Part 1. CAP still executes their calls and enforces status transitions; the 10,000 EUR threshold here is model guidance, not a server-side rule for every client.
 
 ## Try It
-Run `npm run check:skill` to check the key text rules (not a model test). Restart CAP, then compare `/a2a/orders-assistant/.well-known/agent-card.json` with the Part 2 card. Look for `orders-assistant` and `order-management` instead of the CDS-generated action list.
+Run `npm run check:skill` to check the key text rules (not a model test). Restart CAP **manually**, then compare `/a2a/orders-assistant/.well-known/agent-card.json` with the Part 2 card. Look for `orders-assistant` and `order-management` instead of the CDS-generated action list.
+
+In case, that it still looks the same. Try `npm run workshop -- solved `
 
 Start a new conversation at `/a2a/orders-assistant/preview/` and create a 25,000 EUR order for Example Co. Check that CAP called `createOrder` and `requestApproval` and that the order is `PENDING_APPROVAL`; do not rely on the reply alone. If the model fails after a write, check CAP before retrying. Copilot uses MCP with its own model and does **not** automatically load this agent's skill, so its response may differ.
 

@@ -14,15 +14,15 @@ using { OrdersAssistantService } from './service';
 annotate OrdersAssistantService with @agent: '/a2a/orders-assistant';
 ```
 
-The `using` line refers to the service from Part 1; it does not create another service. The annotation exposes it over A2A without changing its CAP actions or authorization. With no `AGENTS.md` yet, the package builds an agent from the CDS service description and tools.
+The `using` line refers to the service from Part 1; it does not create another service. The annotation exposes it over A2A without changing its CAP actions. With no `AGENTS.md` yet, the package builds an agent from the CDS service description and tools.
 
 ## Connect the Model
-The browser agent needs a Gemini API key in addition to your Copilot login. Copy `.env.example` to `.env`, set `GEMINI_API_KEY`, and restart CAP with `npm run cap`.
+The browser agent needs a Gemini API key in addition to your Copilot login. Rename `.env.example` to `.env`, set `GEMINI_API_KEY`, and CAP should restart automatically (if not use `npm run cap`).
 
 ## Try It
-Open `/a2a/orders-assistant/preview/` on CAP port 4004, keeping the trailing slash so mock authentication survives redirects. Ask about order 1001, then create an order for Example Co. Follow the tool calls in the CAP console and check the actual order in CAP rather than trusting only the reply (hallucinations).
+Open `/a2a/orders-assistant/preview/` on CAP port 4004. Ask about order 1001, then create an order for Example Co. Follow the tool calls in the CAP console and check the actual order in CAP rather than trusting only the reply (hallucinations).
 
-Open `/a2a/orders-assistant/.well-known/agent-card.json`. Its `skills` list is generated from the service's entity and actions (such as `query` and `createOrder`): these are advertised A2A capabilities, not instructions from a `SKILL.md` file. Save what you see to compare with Part 3. Copilot still connects to the MCP service with its own model; the browser uses your separately configured Gemini model.
+Open the agent card or use `/a2a/orders-assistant/.well-known/agent-card.json`. Its `skills` list is generated from the service's entity and actions (such as `query` and `createOrder`): these are advertised A2A capabilities, not instructions from a `SKILL.md` file. Save or **screenshot** what you see to compare with Part 3. Copilot still connects to the MCP service with its own model; the browser uses your separately configured Gemini model.
 
 ## Think About It
 Why can the browser use the service without a custom chat loop? Does seeing a tool listed on the agent card tell you when the agent should call it? What might change when you give the agent written instructions in Part 3?

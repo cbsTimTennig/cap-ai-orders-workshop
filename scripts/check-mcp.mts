@@ -2,8 +2,6 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 
 const base = process.env.CAP_URL ?? 'http://localhost:4004'
-const bob = 'Basic ' + Buffer.from('bob:').toString('base64')
-const alice = 'Basic ' + Buffer.from('alice:').toString('base64')
 const client = new Client({ name: 'workshop-check', version: '1.0.0' })
 let failed = false
 const check = (ok: boolean, message: string) => {
@@ -12,9 +10,7 @@ const check = (ok: boolean, message: string) => {
 }
 
 try {
-  await client.connect(new StreamableHTTPClientTransport(new URL('/mcp/orders-assistant', base), {
-    requestInit: { headers: { Authorization: bob } }
-  }))
+  await client.connect(new StreamableHTTPClientTransport(new URL('/mcp/orders-assistant', base)))
 
   const names = (await client.listTools()).tools.map(tool => tool.name)
   check(['describe', 'query', 'call'].every(name => names.includes(name)), 'CAP MCP tools available')
@@ -37,17 +33,10 @@ try {
 
   const created = await client.callTool({ name: 'call', arguments: { action: 'createOrder', parameters: { customer: 'Check Co', amount: 12500 } } })
   const orderNo = (created.structuredContent as { result?: { orderNo: number } } | undefined)?.result?.orderNo
-  check(!created.isError && Number.isInteger(orderNo), 'Order created as bob')
+  check(!created.isError && Number.isInteger(orderNo), 'Order created')
   if (orderNo) {
     const approval = await client.callTool({ name: 'call', arguments: { action: 'requestApproval', parameters: { orderNo } } })
     check((approval.structuredContent as { result?: { status: string } } | undefined)?.result?.status === 'PENDING_APPROVAL', 'Approval requested')
-
-    const url = new URL('/odata/v4/orders/approveOrder', base)
-    const body = JSON.stringify({ orderNo })
-    const denied = await fetch(url, { method: 'POST', headers: { Authorization: bob, 'Content-Type': 'application/json' }, body })
-    check(denied.status === 403, 'bob cannot approve through OData either')
-    const allowed = await fetch(url, { method: 'POST', headers: { Authorization: alice, 'Content-Type': 'application/json' }, body })
-    check(allowed.ok && ((await allowed.json()) as { status: string }).status === 'APPROVED', 'alice can approve through CAP')
   }
 } catch (error) {
   check(false, `${error instanceof Error ? error.message : String(error)} (is npm run cap running?)`)

@@ -32,13 +32,6 @@
     "requires": {
       "llm": {
         "model": "gemini-3.5-flash-lite"
-      },
-      "auth": {
-        "kind": "mocked",
-        "users": {
-          "alice": { "password": "", "roles": ["approver"] },
-          "bob": { "password": "", "roles": [] }
-        }
       }
     }
   }
