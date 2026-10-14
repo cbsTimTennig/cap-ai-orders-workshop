@@ -39,6 +39,7 @@
 				"esbenp.prettier-vscode",
 				"mutantdino.resourcemonitor",
 				"codeandstuff.package-json-upgrade",
+				"sapse.vscode-cds"
 			],
 			"settings": {
 				"editor.formatOnSave": true,
