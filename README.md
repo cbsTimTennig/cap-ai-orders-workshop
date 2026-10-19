@@ -4,7 +4,7 @@ Build an AI assistant for a CAP Orders application in three steps (30 minutes): 
 
 ## Getting Started
 
-The project starts only with the Orders CAP service. You will build the AI functionality on top. You have 3 options to use this repo. Install locally, use the devcontainer or run it online in github codespaces (top right corner, Code and then Codespaces). For local setup, use Node.js 22+ and run:
+The project starts only with the Orders CAP service. You will build the AI functionality on top. You have 3 options to use this repo. Install locally, use the devcontainer or run it online in github codespaces (top right corner, Code and then Codespaces). For local setup, use Node.js 22+ and run in the terminal:
 
 ```text
 npm ci
