@@ -1,6 +1,6 @@
 # CAP AI Orders Workshop
 
-Build an AI assistant for a CAP Orders application in three steps: connect Copilot through MCP, try a CAP agent in the browser, then guide it with agent instructions and an order-management skill. Start with [Part 1](task-1.md).
+Build an AI assistant for a CAP Orders application in three steps (30 minutes): connect Copilot through MCP, try a CAP agent in the browser, then guide it with agent instructions and an order-management skill. Start with [Part 1](task-1.md).
 
 ## Getting Started
 
